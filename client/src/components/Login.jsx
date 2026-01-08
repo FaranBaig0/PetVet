@@ -25,7 +25,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/login", formData);
+      const res = await axios.post("http://localhost:6969/api/login", formData);
       localStorage.setItem("token", res.data.token);
       navigate("/");
     } catch (err) {
@@ -39,12 +39,12 @@ const Login = () => {
     <div className="login-wrapper">
       <div className="login-box">
 
-        {/* LEFT : FULL IMAGE */}
+        
         <div className="login-left">
           <img src={loginImg} alt="PetVet Login" />
         </div>
 
-        {/* RIGHT : CENTERED FORM */}
+       
         <div className="login-right">
           <div className="form-center">
             <h1>Welcome Back</h1>
