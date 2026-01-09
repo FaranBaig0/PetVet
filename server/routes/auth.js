@@ -47,6 +47,36 @@ db.query(
 
 
 //----- LOGIN -----
+// router.post("/login", (req, res) => {
+//   const { email, password } = req.body;
+
+//   const sql = "SELECT * FROM users WHERE email = ?";
+//   db.query(sql, [email], async (err, result) => {
+//     if (err) return res.status(500).json({ message: "Server Error" });
+
+//     if (result.length === 0)
+//       return res.status(404).json({ message: "Invalid Credentials" });
+
+//     const user = result[0];
+//     const isMatch = await bcrypt.compare(password, user.password_hash);
+
+//     if (!isMatch)
+//       return res.status(401).json({ message: "Invalid Password" });
+
+//     const token = jwt.sign(
+//       { id: user.id, email: user.email },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     res.json({
+//       message: "Login Successful",
+//       token,
+//       user: { id: user.id, email: user.email, name: user.name, role: user.role },
+//     });
+//   });
+// });
+
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -55,16 +85,16 @@ router.post("/login", (req, res) => {
     if (err) return res.status(500).json({ message: "Server Error" });
 
     if (result.length === 0)
-      return res.status(404).json({ message: "Invalid Credentials" });
+      return res.status(401).json({ message: "Invalid Credentials" });
 
     const user = result[0];
-    const isMatch = await bcrypt.compare(password, user.password_hash);
 
+    const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch)
-      return res.status(401).json({ message: "Invalid Password" });
+      return res.status(401).json({ message: "Invalid Credentials" });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -72,9 +102,15 @@ router.post("/login", (req, res) => {
     res.json({
       message: "Login Successful",
       token,
-      user: { id: user.id, email: user.email, name: user.name, role: user.role },
+      user: {
+        id: user.id,
+        name: user.full_name,
+        email: user.email,
+        role: user.role
+      }
     });
   });
 });
+
 
 module.exports = router;
